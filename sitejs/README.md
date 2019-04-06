@@ -11,7 +11,7 @@
     Trigger on site user request. It will change CHS to CHT using tongwen service.
     
 ## sites
- ### "site name-needComplete
+ ### "site name"-needComplete
     Trigger on site load every component complete. This is flag only, when exist, it will stop load other another component in this site, may help disalbe non-stop site.
  ### "site name"-check
     Trigger on site load every component complete. It help detect main content wad loaded. 
