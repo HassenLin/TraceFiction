@@ -1,31 +1,134 @@
-# sitejs.json format
+# util.js
 
 ## global
- For all site
- 
- ### removeAllScript
-    Trigger on site load every component complete. It will remove original JavaScript tags's childs.
- ### toCHS.macro
-    Trigger on site user request. It will change CHT to CHS using tongwen service.
- ### toCHT.macro
-    Trigger on site user request. It will change CHS to CHT using tongwen service.
+ util.js include 4 parts.
+ There first 3 parts are traceFictionJS array, TFJS_DOM_Helper object and TraceFictionJSUtil object.
+ The 4th part is site configure code, play see next section.
+
+ ### traceFictionJS 
+    traceFictionJS is TraceFictionJSUtil object array, init by site configure code.
+
+ ### filter
+   filter has Several types.
+   "name" : match id == name
+   ["name"] : match id == name
+   ["name", "id"] : match id == name
+   ["name", "tag"] : match first tag == name
+   ["name", "class"] : match first class == name
+   ["name", "tag", index] : get index of all match tag == name 
+   ["name", "class", index] : get index of all match class == name 
+   
+ ### TFJS_DOM_Helper
+   TFJS_DOM_Helper is DOM util code, please DO NOT modify by user.
+
+   ObjToStr : function (obj)
+     Debug function. Convbert object to string.
+
+   AddFontFamily : function(name, url) // call by app  
+     Add font file to html head.
+
+   AddScript : function(url) // call by app
+     Add Java Script file to html head.
+   
+   Filter:
+     Create filter object 
+
+   CheckRemoveItem : function(element, filter) 
+     Remove element and it's childs when filter pass. then returen result.
+
+   removeItemFilter : function(element, filters)
+     filters is filter array.
+     traversal element tree. Remove each element and it's childs when one of filter pass.
+       
+   SearchNode : function(node) {
+     Search document element by filter. return {element:element,name:name,type:type,index:index};
     
-## sites
- ### "site name"-needComplete
-    Trigger on site load every component complete. This is flag only, when exist, it will stop load other another component in this site, may help disalbe non-stop site.
- ### "site name"-check
-    Trigger on site load every component complete. It help detect main content wad loaded. 
-    Return "yes" or "no".
- ### "site name"
-    Trigger on site load complete (site check pass). 
-    Get readable text context form html.
-    1 TraceFiction will call with arguments: size (html font size) ,fcolor (html font color) and bcolor (html background color)
-    2 add "TraceFictionDetectStartOfChapter" in content start
-    3 add "TraceFictionDetectEndOfChapter" in content end
-    Return readable text context.
- ### "site name"-nextPage
-    Trigger on TTS read to TraceFictionDetectEndOfChapter.
-    return next page url.
+   CheckNodeExist : function(node) 
+     node is filter.
+     Convert SearchNode result to 'yes' or 'no'
+    
+   RemoveNodes : function(nodes)
+     nodes is filte array.
+     Search document element by nodes array. And remove it when one of filter pass.
+
+   GetInnerHTML : function(node, filters)
+     node is filter.
+     filters is filter array.
+     get document element by node, and remove not required elements by filters. return element's innerHTML.
+
+   getNextNode : function (node)
+     node is element.
+     get next node in html order.
+
+   getNextTextNode: function(node)
+     node is element.
+     get next text node in html order.
+
+   getNextHTMLNode: function(node) 
+     node is element.
+     get next html tag node in html order.
+
+   getFirstElementOfScreen : function()
+     get first element of current screen.
+   
+   DataCollect : function (newStart, fromTop ,yoff) // call by app
+     get text collection for speech format.
+
+   InitSupportHosts : function () 
+     init site collection.
+
+   IsSiteSupported : function () 
+      retrun 'yes' when site is supported.
+
+ ### TraceFictionJSUtil
+
+   constructor(options)
+     options :
+       site : text, require, site name
+       titleNode : filter, require, document title.
+       titleFilter : filter array, optional, remove unnecessary inforamtion in title.
+       contentNode : filter, require, document content.
+       contentFilter : filter array, optional, remove unnecessary inforamtion in content.
+       pageNode : filter, require, prev chapter, next chapter.
+       pageFilter : filter array, optional, remove unnecessary inforamtion in pageNode.
+     save options and init.
+
+   GetOptionValue(name, defvalue)
+     get option item.
+
+   SingleChapterContent() // call by app
+     convert html to read friendly mode.
+
+   CheckNeedWaitComplete() // call by app
+     check needComplete member exist.
+     when needComplete member exist, app will wait all item loaded.
+     when needComplete member no exist, app will only wait html page loaded.
+   
+   GetNextPage()
+      check nextPageUrl member exist and return it's value.
+
+   check : function()
+      user defined, check document loaded flag.
+
+   nextPage : function()
+      user defined, next chapter url.
+
+   ChapterList : function()
+      user defined, next chapter list url.
+
+   needComplete : bool
+      user defined, see CheckNeedWaitComplete().
+
+## site configure code
+ var tempTFObj;
+ // czbooks.net
+ tempTFObj = new TraceFictionJSUtil({site:'czbooks.net', titleNode:['name', 'class', 0], contentNode: ['content', 'class', 0], pageNode: ['chapter-nav','class',0] });
+ tempTFObj.check = function(){return TFJS_DOM_Helper.CheckNodeExist(['content', 'class', 0]);};
+ tempTFObj.nextPage = function(){return TFJS_DOM_Helper.SearchNode(['next-chapter','class']).href;}
+ tempTFObj.ChapterList = function(){return TFJS_DOM_Helper.SearchNode(['position','class']).children[1].href;}
+ ...
+ TFJS_DOM_Helper.InitSupportHosts();
+
     
 # Tools
  ## Javascript editor

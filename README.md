@@ -1,6 +1,6 @@
 # TraceFiction
 
-This repository store iOS app TraceFiction helps and sites Javascript opensource. 
+This repository is iOS and Android app TraceFiction helps and util Javascript opensource. 
    
 ## 1 App link 
    
@@ -8,11 +8,13 @@ App link is https://itunes.apple.com/tw/app/%E8%BF%BD%E5%B0%8F%E8%AA%AA/id901680
     
 ## 2 Helps link 
    
-Chinese help link is https://hassenlin.github.io/TraceFiction/tw/
+Traditional Chinese help link is https://hassenlin.github.io/TraceFiction/tw/
+
+Simplified Chinese help link is https://hassenlin.github.io/TraceFiction/cn/
     
 English help link is https://hassenlin.github.io/TraceFiction/en/
 
-## 3 Sites JavaScript
+## 3 Util JavaScript
 
-Sites JavaScript store in sitejs/
+Sites JavaScript store in utiljs/
     
