@@ -5,15 +5,15 @@
  There first 2 parts are TFJS_DOM_Helper object and TraceFictionJSUtil object. <br/>
  The 3rd part is site configure code, play see next section. <br/>
 
- ## filter
-   filter has Several types. <br/>
-   "name" : match id == name <br/>
-   ["name"] : match id == name <br/>
-   ["name", "id"] : match id == name <br/>
-   ["name", "tag"] : match first tag == name <br/>
-   ["name", "class"] : match first class == name <br/>
-   ["name", "tag", index] : get index of all match tag == name <br/>
-   ["name", "class", index] : get index of all match class == name <br/>
+ ## filter 
+  `filter has Several types. 
+   "name" : match id == name 
+   ["name"] : match id == name 
+   ["name", "id"] : match id == name 
+   ["name", "tag"] : match first tag == name 
+   ["name", "class"] : match first class == name 
+   ["name", "tag", index] : get index of all match tag == name 
+   ["name", "class", index] : get index of all match class == name` 
    
  ## TFJS_DOM_Helper
    TFJS_DOM_Helper is DOM util code, please DO NOT modify by user.
@@ -80,15 +80,15 @@
  ## TraceFictionJSUtil
 
    ### constructor(options)
-     options :<br/>
-       site : text, require, site name. <br/>
-       titleNode : filter, require, document title. <br/>
-       titleFilter : filter array, optional, remove unnecessary inforamtion in title. <br/>
-       contentNode : filter, require, document content. <br/>
-       contentFilter : filter array, optional, remove unnecessary inforamtion in content. <br/>
-       pageNode : filter, require, prev chapter, next chapter. <br/>
-       pageFilter : filter array, optional, remove unnecessary inforamtion in pageNode. <br/>
-     save options and init.
+    `options :
+       site : text, require, site name. 
+       titleNode : filter, require, document title. 
+       titleFilter : filter array, optional, remove unnecessary inforamtion in title. 
+       contentNode : filter, require, document content. 
+       contentFilter : filter array, optional, remove unnecessary inforamtion in content. 
+       pageNode : filter, require, prev chapter, next chapter. 
+       pageFilter : filter array, optional, remove unnecessary inforamtion in pageNode. 
+     save options and init.`
 
    ### GetOptionValue(name, defvalue)
      get option item.
@@ -97,9 +97,9 @@
      convert html to read friendly mode.
 
    ### CheckNeedWaitComplete() // call by app
-     check needComplete member exist. <br/>
-     when needComplete member exist, app will wait all item loaded. <br/>
-     when needComplete member no exist, app will only wait html page loaded. <br/>
+    `check needComplete member exist. 
+     when needComplete member exist, app will wait all item loaded. 
+     when needComplete member no exist, app will only wait html page loaded. `
    
    ### GetNextPage()
       check nextPageUrl member exist and return it's value.
