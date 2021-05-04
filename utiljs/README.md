@@ -1,20 +1,17 @@
 # util.js
 
 
- util.js include 4 parts.<br/>
- There first 3 parts are traceFictionJS array, TFJS_DOM_Helper object and TraceFictionJSUtil object.<br/>
- The 4th part is site configure code, play see next section.<br/>
-
- ## traceFictionJS 
-    traceFictionJS is TraceFictionJSUtil object array, init by site configure code.<br/>
+ util.js include 3 parts. <br/>
+ There first 2 parts are TFJS_DOM_Helper object and TraceFictionJSUtil object. <br/>
+ The 3rd part is site configure code, play see next section. <br/>
 
  ## filter
-   filter has Several types.<br/>
-   "name" : match id == name<br/>
-   ["name"] : match id == name<br/>
-   ["name", "id"] : match id == name<br/>
-   ["name", "tag"] : match first tag == name<br/>
-   ["name", "class"] : match first class == name<br/>
+   filter has Several types. <br/>
+   "name" : match id == name <br/>
+   ["name"] : match id == name <br/>
+   ["name", "id"] : match id == name <br/>
+   ["name", "tag"] : match first tag == name <br/>
+   ["name", "class"] : match first class == name <br/>
    ["name", "tag", index] : get index of all match tag == name <br/>
    ["name", "class", index] : get index of all match class == name <br/>
    
@@ -37,23 +34,23 @@
      Remove element and it's childs when filter pass. then returen result.
 
    ### removeItemFilter : function(element, filters)
-     filters is filter array.<br/>
+     filters is filter array. <br/>
      traversal element tree. Remove each element and it's childs when one of filter pass.
        
    ### SearchNode : function(node) {
      Search document element by filter. return {element:element,name:name,type:type,index:index};
     
    ### CheckNodeExist : function(node) 
-     node is filter.<br/>
+     node is filter. <br/>
      Convert SearchNode result to 'yes' or 'no'
     
    ### RemoveNodes : function(nodes)
-     nodes is filte array.<br/>
+     nodes is filte array. <br/>
      Search document element by nodes array. And remove it when one of filter pass.
 
    ### GetInnerHTML : function(node, filters)
-     node is filter.<br/>
-     filters is filter array.<br/>
+     node is filter. <br/>
+     filters is filter array. <br/>
      get document element by node, and remove not required elements by filters. return element's innerHTML.
 
    ### getNextNode : function (node)
@@ -84,13 +81,13 @@
 
    ### constructor(options)
      options :<br/>
-       site : text, require, site name<br/>
-       titleNode : filter, require, document title.<br/>
-       titleFilter : filter array, optional, remove unnecessary inforamtion in title.<br/>
-       contentNode : filter, require, document content.<br/>
-       contentFilter : filter array, optional, remove unnecessary inforamtion in content.<br/>
-       pageNode : filter, require, prev chapter, next chapter.<br/>
-       pageFilter : filter array, optional, remove unnecessary inforamtion in pageNode.<br/>
+       site : text, require, site name. <br/>
+       titleNode : filter, require, document title. <br/>
+       titleFilter : filter array, optional, remove unnecessary inforamtion in title. <br/>
+       contentNode : filter, require, document content. <br/>
+       contentFilter : filter array, optional, remove unnecessary inforamtion in content. <br/>
+       pageNode : filter, require, prev chapter, next chapter. <br/>
+       pageFilter : filter array, optional, remove unnecessary inforamtion in pageNode. <br/>
      save options and init.
 
    ### GetOptionValue(name, defvalue)
@@ -100,9 +97,9 @@
      convert html to read friendly mode.
 
    ### CheckNeedWaitComplete() // call by app
-     check needComplete member exist.<br/>
-     when needComplete member exist, app will wait all item loaded.<br/>
-     when needComplete member no exist, app will only wait html page loaded.<br/>
+     check needComplete member exist. <br/>
+     when needComplete member exist, app will wait all item loaded. <br/>
+     when needComplete member no exist, app will only wait html page loaded. <br/>
    
    ### GetNextPage()
       check nextPageUrl member exist and return it's value.
