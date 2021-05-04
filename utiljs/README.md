@@ -126,12 +126,5 @@
  ...
  TFJS_DOM_Helper.InitSupportHosts();`
 
-    
-# Tools
- ## Javascript editor
-    Unpack online json:string content to human viewable  
-    <https://beautifier.io/>
- ## Javascript packer
-    Pack javascript into one line json:string
-    <http://dean.edwards.name/packer/>
+ 
         
