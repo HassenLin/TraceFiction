@@ -156,9 +156,10 @@ TFJS_DOM_Helper = {
         }
         return null;
     },
+  
     DataCollect : function (newStart, fromTop ,yoff) {
         var rate=1.0;
-        if(window['devicePixelRatio'])
+        if(window['devicePixelRatio'] && (typeof TraceFictionCallByiOS === 'undefined'))
             rate = window.devicePixelRatio;
         var selection = window.getSelection();
         var node = null, result = '', esc = ';' + String.fromCharCode(27);
