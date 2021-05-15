@@ -4,17 +4,74 @@ TFJS_DOM_Helper = {
         var str = JSON.stringify(obj, null, 4);
         return str;
     },
-    AddFontFamily : function(name, url) {
-            var newStyle = document.createElement('style');
-            newStyle.appendChild(document.createTextNode( '@font-face { font-family: ' + name + '; src: url("' + url + '"); }'));
-            document.head.appendChild(newStyle);
+    RemoveTag : function(tag) {
+                var hs = document.getElementsByTagName(tag);
+                for (var i=0, max = hs.length; i < max; i++) {
+                    try{
+                        if(hs[i]) {
+                            if(hs[i] && hs[i].hasOwnProperty("parentNode") && hs[i].parentNode!=null)
+                                hs[i].parentNode.removeChild(hs[i]);
+                            else {
+                                try{ document.removeChild(hs[i]); } catch (e)  {}
+                                try{ document.head.removeChild(hs[i]); } catch  (e) {}
+                            }
+                        }
+                    }
+                    catch(e) {
+                        console.log(hs[i]);
+                        console.log(e);
+                    }
+                }
+            },
+    RemoveUnuseTag : function() {
+        TFJS_DOM_Helper.RemoveTag('style');
+        TFJS_DOM_Helper.RemoveTag('script');
+        TFJS_DOM_Helper.RemoveTag('link');
+        TFJS_DOM_Helper.RemoveTag('meta');
+    },
+    GenStyleString : function() {
+        var FontSize = (typeof TraceFictionFontSize === 'undefined')? 32 : TraceFictionFontSize;
+        var ForegroundColor = (typeof TraceFictionForegroundColor === 'undefined')? '#000000' : TraceFictionForegroundColor;
+        var BackgroundColor = (typeof TraceFictionBackgroundColor === 'undefined')? '#dfdfcf' : TraceFictionBackgroundColor;
+        var FontName = (typeof TraceFictionFontName === 'undefined')? 'myfont' : TraceFictionFontName;
+        var style = '.TFContentStyle {\n color:' + ForegroundColor + ";\n  font-size:" + FontSize + "px;\n  line-height:" + (FontSize + FontSize / 3) + 'px;\n  letter-spacing:2px;\n  padding-left:10px;\n  padding-right:10px;\n}\n';
+        style = style + 'body {\n  background-color:'+BackgroundColor+';\n  font-family : "' + FontName + '";\n}\n';
+        if((typeof TraceFictionFontUrl !== 'undefined'))
+            style = style + '@font-face {\n  font-family: ' + FontName + ';\n  src: url("' + TraceFictionFontUrl + '");\n}\n';
+        return style;
+    },
+    SetupStyle : function() {
+        TFJS_DOM_Helper.RemoveUnuseTag();
+        var newStyle = document.createElement('style');
+        newStyle.appendChild(document.createTextNode(TFJS_DOM_Helper.GenStyleString()));
+        document.head.appendChild(newStyle);
+    },
+    GenHtml : function(prevPage, nextPage, listPage) {
+        var bookTitleEl = document.getElementById('chapterTitle');
+        if(!bookTitleEl)
+            return null;
+        var bookContentEl = document.getElementById('TFAllContent');
+        if(!bookContentEl)
+            return null;
+        var bookTitle = '<div id="chapterTitle" class="TFContentStyle" >'  + bookTitleEl.innerHTML  + "</div>";
+        var pages = "<p>";
+        if(prevPage.length > 0)
+            pages += '<a href="'+prevPage+'">上一頁</a><p/>\n';
+        if(nextPage.length > 0)
+            pages += '<a class="TraceFictionNextPage" href="'+nextPage+'">下一頁</a><p/>\n';
+        if(listPage.length > 0)
+            pages += '<a href="'+listPage+'">章節列表</a><p/>\n';
+
+        var ctx = "<!DOCTYPE html>\n<html><head>\n<meta charset=\"UTF-8\">\n<title>"+document.title+"</title>\n<style>"+TFJS_DOM_Helper.GenStyleString()+"</style>\n</head>\n<body>\n" + bookTitle +
+        pages + '<p id="TraceFictionStartOfChapter"> TraceFictionDetectStartOfChapter</p><div id="TFAllContent" class="TFContentStyle">\n' + bookContentEl.innerHTML + '\n</div>\n<p>TraceFictionDetectEndOfChapter</p>\n' + pages + '\n</body>\n</html>';
+        return ctx;
     },
     AddScript : function(url) {
-            var newScript = document.createElement('script');
-            newScript.type = 'text/javascript';
-            newScript.src = url;
-            document.head.appendChild(newScript);
-        },
+        var newScript = document.createElement('script');
+        newScript.type = 'text/javascript';
+        newScript.src = url;
+        document.head.appendChild(newScript);
+    },
     Filter : function(filter){
         var ret = {name:null, type:null, index:0};
         if(Array.isArray(filter)){
@@ -156,7 +213,7 @@ TFJS_DOM_Helper = {
         }
         return null;
     },
-  
+
     DataCollect : function (newStart, fromTop ,yoff) {
         var rate=1.0;
         if(window['devicePixelRatio'] && (typeof TraceFictionCallByiOS === 'undefined'))
@@ -206,12 +263,16 @@ TFJS_DOM_Helper = {
                 TFJS_DOM_Helper.Site = TFJS_DOM_Helper.AllSites[e];
                 return;
             }
-
         }
     },
     IsSiteSupported : function () {
-        if(TFJS_DOM_Helper.Site  == null)
+        if(TFJS_DOM_Helper.Site  == null) {
+            if(document.getElementById('TraceFictionStartOfChapter')) {
+                TFJS_DOM_Helper.Site = TFJS_DOM_Helper.AllSites['default_saved'];
+                return "yes";
+            }
             return "no";
+        }
         else
             return "yes";
     },
@@ -242,9 +303,7 @@ TraceFictionJSUtil = class {
         if(this.options.hasOwnProperty("bodyFilter")) {
             TFJS_DOM_Helper.RemoveNodes(this.options.bodyFilter);
         }
-        var FontSize = (typeof TraceFictionFontSize === 'undefined')? 32 : TraceFictionFontSize;
-        var ForegroundColor = (typeof TraceFictionForegroundColor === 'undefined')? '#000000' : TraceFictionForegroundColor;
-        var BackgroundColor = (typeof TraceFictionBackgroundColor === 'undefined')? '#dfdfcf' : TraceFictionBackgroundColor;
+
         var ListText = (typeof TraceFictionListText === 'undefined')? 'List' : TraceFictionListText;
         if(this.options.hasOwnProperty("pageNode")) {
             var pageNode = this.GetOptionValue("pageNode", ["page", "id", 0]) ;
@@ -256,19 +315,16 @@ TraceFictionJSUtil = class {
         }
         var i, elements = document.getElementsByTagName("link");
 
-        var style = 'style="color:' + ForegroundColor + ";font-size:" + FontSize + "px;line-height:" + (FontSize + FontSize / 3) + 'px;letter-spacing:2px;padding-left:10px; padding-right:10px;"';
-        var ctx = "<div " + style + ">" + TFJS_DOM_Helper.GetInnerHTML(titleNode, this.options.titleFilter) + "</div>";
-        ctx += pages + '<p id="TraceFictionStartOfChapter"> TraceFictionDetectStartOfChapter</p><div id="TFAllContent" ' + style + ">";
+        var ctx = '<div id="chapterTitle" class="TFContentStyle" >' + TFJS_DOM_Helper.GetInnerHTML(titleNode, this.options.titleFilter) + "</div>";
+        ctx += pages + '<p id="TraceFictionStartOfChapter"> TraceFictionDetectStartOfChapter</p><div id="TFAllContent" class="TFContentStyle" >';
         for (i = 0; i < elements.length; i++)
             elements[i].disabled = !0;
-        document.body.style.background = BackgroundColor;
-
         ctx = (ctx = ctx + '<div class="TFTextContent">' + TFJS_DOM_Helper.GetInnerHTML(contentNode, this.options.contentFilter) + "</div>") + "</div><p>TraceFictionDetectEndOfChapter</p>" + pages;
         if(typeof TraceFictionToCHT !== 'undefined' && TraceFictionToCHT)
             ctx = NewTongWenConvert.toTrad(ctx);
         if(typeof TraceFictionToCHS !== 'undefined' && TraceFictionToCHS)
             ctx = NewTongWenConvert.toSimp(ctx);
-
+        
         document.body.innerHTML = ctx;
     }
     CheckNeedWaitComplete() {
@@ -278,12 +334,24 @@ TraceFictionJSUtil = class {
             return 'no'
     }
     GetNextPage() {
-        if(!this['nextPageUrl']  || this['nextPageUrl'] == "") {
-            if(this['nextPage'])
-                this.nextPageUrl = this['nextPage']();
-            else
-                this.nextPageUrl = "";
+        try {
+            if(!this['nextPageUrl']  || this['nextPageUrl'] == "") {
+                if(this['nextPage'])
+                    this.nextPageUrl = this['nextPage']();
+                else {
+                    var nextPageEls = document.getElementsByClassName('TraceFictionNextPage');
+                    if(nextPageEls.length>0) {
+                        this.nextPageUrl=nextPageEls[0].href;
+                    }
+                    else
+                        this.nextPageUrl = "";
+                }
+            }
         }
+        catch(e) {
+        }
+        if((typeof this.nextPageUrl === 'undefined' )||this.nextPageUrl.length == 0)
+            return 'no';
         return this.nextPageUrl;
     }
 }
@@ -292,10 +360,16 @@ TraceFictionJSUtil = class {
 
 var tempTFObj;
 // czbooks.net
+tempTFObj = new TraceFictionJSUtil({site:'default_saved'});
+tempTFObj.getContent = function(){};
+tempTFObj.check = function(){return TFJS_DOM_Helper.CheckNodeExist(['TFAllContent']);};
+tempTFObj.nextPage = function(){return TFJS_DOM_Helper.SearchNode(['TraceFictionNextPage','class']).href;}
+
+// czbooks.net
 tempTFObj = new TraceFictionJSUtil({site:'czbooks.net', titleNode:['name', 'class', 0], contentNode: ['content', 'class', 0], pageNode: ['chapter-nav','class',0] });
 tempTFObj.check = function(){return TFJS_DOM_Helper.CheckNodeExist(['content', 'class', 0]);};
 tempTFObj.nextPage = function(){return TFJS_DOM_Helper.SearchNode(['next-chapter','class']).href;}
-tempTFObj.ChapterList = function(){return TFJS_DOM_Helper.SearchNode(['position','class']).children[1].href;}
+tempTFObj.ChapterList = function(){return TFJS_DOM_Helper.SearchNode(['position','class']).children[2].href;}
 //tempTFObj.nextPage = function(){return document.getElementsByClassName('next-chapter')[0].href;};
 
 // uukanshu.com
