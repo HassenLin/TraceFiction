@@ -4,7 +4,11 @@ This repository is iOS and Android app TraceFiction helps and util Javascript op
    
 ## 1 App link 
    
-App link is https://itunes.apple.com/tw/app/%E8%BF%BD%E5%B0%8F%E8%AA%AA/id901680030?mt=8
+iOS App link is https://itunes.apple.com/tw/app/%E8%BF%BD%E5%B0%8F%E8%AA%AA/id901680030?mt=8
+Android App link is https://play.google.com/store/apps/details?id=idv.hassen.tracefiction
+Windows Tracefiction Downloader link is https://github.com/HassenLin/TraceFiction/releases
+
+New feature: Use downloader download fiction as zip file, and install to your device.
     
 ## 2 Helps link 
    
