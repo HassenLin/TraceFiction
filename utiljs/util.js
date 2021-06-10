@@ -201,14 +201,88 @@ TFJS_DOM_Helper = {
             node = this.getNextNode(node);
         return node;
     },
+    caretRangeFromPoint: function(x, y) {
+        var log = "";
+
+        function inRect(x, y, rect) {
+            return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+        }
+
+        function inObject(x, y, object) {
+            var rects = object.getClientRects();
+            for (var i = rects.length; i--;)
+                if (inRect(x, y, rects[i]))
+                    return true;
+            return false;
+        }
+
+        function getTextNodes(node, x, y) {
+            if (!inObject(x, y, node))
+                return [];
+
+            var result = [];
+            node = node.firstChild;
+            while (node) {
+                if (node.nodeType == 3)
+                    result.push(node);
+                if (node.nodeType == 1)
+                    result = result.concat(getTextNodes(node, x, y));
+
+                node = node.nextSibling;
+            }
+
+            return result;
+        }
+
+        var element = document.elementFromPoint(x, y);
+        var nodes = getTextNodes(element, x, y);
+        if (!nodes.length)
+            return null;
+        var node = nodes[0];
+
+        var range = document.createRange();
+        range.setStart(node, 0);
+        range.setEnd(node, 1);
+
+        for (var i = nodes.length; i--;) {
+            var node = nodes[i],
+                text = node.nodeValue;
+
+
+            range = document.createRange();
+            range.setStart(node, 0);
+            range.setEnd(node, text.length);
+
+            if (!inObject(x, y, range))
+                continue;
+
+            for (var j = text.length; j--;) {
+                if (text.charCodeAt(j) <= 32)
+                    continue;
+
+                range = document.createRange();
+                range.setStart(node, j);
+                range.setEnd(node, j + 1);
+
+                if (inObject(x, y, range)) {
+                    range.setEnd(node, j);
+                    return range;
+                }
+            }
+        }
+        return null;
+    },
     getFirstElementOfScreen : function() {
         for(var y = 5 ; y < window.innerHeight; y += 5){
             for(var x = 5; x < window.innerWidth; x += 5)
             {
-                var start = document.caretRangeFromPoint(x, y);
-                var node = start.startContainer;
-                if(node && node.nodeType == 3)
-                    return {node:node,offset:start.startOffset};
+                var start;
+                if(document.caretRangeFromPoint)
+                    start = document.caretRangeFromPoint(x, y);
+                else 
+                    start = TFJS_DOM_Helper.caretRangeFromPoint(x, y);
+                if(start && start.startContainer && start.startContainer.nodeType == 3)
+                    return {node:start.startContainer,offset:start.startOffset};
             }
         }
         return null;
